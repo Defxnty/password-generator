@@ -1,4 +1,4 @@
-/* Custom Animations */
+/* Пользовательские анимации */
 @keyframes bounce-slow {
     0%, 100% {
         transform: translateY(0);
@@ -45,7 +45,7 @@
 
 
 
-/* Slider Styling */
+/* Стилизация ползунка */
 .slider::-webkit-slider-thumb {
     appearance: none;
     width: 24px;
@@ -72,7 +72,7 @@
     box-shadow: 0 4px 15px rgba(168, 85, 247, 0.5);
 }
 
-/* Option Cards */
+/* Карточки опций */
 .option-card {
     position: relative;
     cursor: pointer;
@@ -114,14 +114,14 @@
     color: #a855f7;
 }
 
-/* Password Character Animation */
+/* Анимация символов пароля */
 .password-char {
     display: inline-block;
     animation: typewriter 0.1s ease forwards;
     opacity: 0;
 }
 
-/* Strength Bar Colors - 11 уровней */
+/* Цвета индикатора надёжности - 11 уровней */
 .strength-critical {
     background: linear-gradient(90deg, #991b1b, #dc2626);
 }
@@ -166,7 +166,7 @@
     background: linear-gradient(90deg, #06b6d4, #22d3ee);
 }
 
-/* History Item */
+/* История */
 .history-item {
     display: flex;
     align-items: center;
@@ -203,7 +203,7 @@
     background: rgba(168, 85, 247, 0.5);
 }
 
-/* Custom Scrollbar */
+/* Пользовательский скроллбар */
 .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
 }
@@ -222,17 +222,17 @@
     background: rgba(168, 85, 247, 0.7);
 }
 
-/* Copy Animation */
+/* Анимация копирования */
 .copy-success {
     animation: pulse-glow 0.5s ease;
 }
 
-/* Shake Animation for Error */
+/* Анимация тряски при ошибке */
 .shake {
     animation: shake 0.5s ease;
 }
 
-/* Details/Summary Styling */
+/* Стилизация */
 details summary {
     list-style: none;
 }
@@ -254,7 +254,7 @@ details[open] summary::before {
     transform: rotate(180deg);
 }
 
-/* Responsive adjustments */
+/* Адаптивные настройки */
 @media (max-width: 480px) {
     .option-content {
         padding: 12px 8px;
@@ -266,12 +266,12 @@ details[open] summary::before {
     }
 }
 
-/* Tooltip */
+/* Подсказка */
 [title] {
     position: relative;
 }
 
-/* Gradient text effect */
+/* Градиент текста */
 .gradient-text {
     background: linear-gradient(135deg, #a855f7, #ec4899);
     -webkit-background-clip: text;
