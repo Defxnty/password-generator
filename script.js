@@ -1,4 +1,4 @@
-// Character sets
+// Наборы символов
 const charSets = {
     uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     lowercase: 'abcdefghijklmnopqrstuvwxyz',
@@ -7,16 +7,16 @@ const charSets = {
     similarChars: 'il1Lo0O'
 };
 
-// Password history
+// История паролей
 let passwordHistory = JSON.parse(localStorage.getItem('passwordHistory')) || [];
 
-// Initialize on page load
+// Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     updateHistoryDisplay();
     generatePassword();
 });
 
-// Update length display
+// Обновление отображения длины
 function updateLength(value) {
     const lengthValue = document.getElementById('lengthValue');
     lengthValue.textContent = value;
@@ -25,7 +25,7 @@ function updateLength(value) {
     generatePassword();
 }
 
-// Generate password
+// Генерация пароля
 function generatePassword() {
     const length = parseInt(document.getElementById('lengthSlider').value);
     const useUppercase = document.getElementById('uppercase').checked;
@@ -34,7 +34,7 @@ function generatePassword() {
     const useSymbols = document.getElementById('symbols').checked;
     const excludeSimilar = document.getElementById('excludeSimilar').checked;
 
-    // Build character pool
+    // Формирование пула символов
     let chars = '';
     let requiredChars = [];
 
@@ -62,7 +62,7 @@ function generatePassword() {
         if (symbolsSet.length > 0) requiredChars.push(getRandomChar(symbolsSet));
     }
 
-    // Check if at least one option is selected
+    // Проверка, что выбран хотя бы один тип символов
     if (chars.length === 0) {
         const display = document.getElementById('passwordDisplay');
         display.innerHTML = '<span class="text-red-400 text-sm whitespace-nowrap">Выберите тип символов!</span>';
@@ -72,46 +72,47 @@ function generatePassword() {
         return;
     }
 
-    // Generate password
+    // Генерация пароля
     let password = '';
     
-    // First, add required characters to ensure each type is represented
+    // Сначала добавляем обязательные символы, чтобы каждый выбранный тип был представлен
+
     requiredChars.forEach(char => {
         password += char;
     });
 
-    // Fill the rest with random characters
+    // Заполняем оставшуюся часть случайными символами
     for (let i = password.length; i < length; i++) {
         password += getRandomChar(chars);
     }
 
-    // Shuffle the password to randomize position of required chars
+    // Перемешиваем пароль
     password = shuffleString(password);
 
-    // Display password with animation
+    // Отображение пароля с анимацией
     displayPasswordWithAnimation(password);
     
-    // Update strength indicator
+    // Обновление индикатора надёжности
     const strengthData = calculateStrength(password);
     updateStrengthIndicator(strengthData);
 
-    // Add to history
+    // Добавление в историю паролей
     addToHistory(password);
 }
 
-// Get random character using crypto API for better randomness
+// Получение случайного символа
 function getRandomChar(str) {
     const array = new Uint32Array(1);
     crypto.getRandomValues(array);
     return str[array[0] % str.length];
 }
 
-// Remove characters from string
+// Удаление символов из строки
 function removeChars(str, charsToRemove) {
     return str.split('').filter(char => !charsToRemove.includes(char)).join('');
 }
 
-// Shuffle string (Fisher-Yates algorithm)
+// Перемешивание строки
 function shuffleString(str) {
     const arr = str.split('');
     for (let i = arr.length - 1; i > 0; i--) {
@@ -123,7 +124,7 @@ function shuffleString(str) {
     return arr.join('');
 }
 
-// Display password with typing animation
+// Отображение пароля с анимацией печати
 function displayPasswordWithAnimation(password) {
     const display = document.getElementById('passwordDisplay');
     display.innerHTML = '';
@@ -134,7 +135,6 @@ function displayPasswordWithAnimation(password) {
         span.className = 'password-char';
         span.style.animationDelay = `${index * 20}ms`;
         
-        // Color coding
         if (/[A-Z]/.test(char)) {
             span.classList.add('text-purple-400');
         } else if (/[a-z]/.test(char)) {
@@ -149,7 +149,7 @@ function displayPasswordWithAnimation(password) {
     });
 }
 
-// Get the character pool size based on password content
+// Определение размера пула символов на основе состава пароля
 function getPoolSize(password) {
     let poolSize = 0;
     
@@ -161,11 +161,12 @@ function getPoolSize(password) {
     return poolSize;
 }
 
-// Check for common patterns that weaken passwords
+// Проверка распространённых шаблонов, ослабляющих пароль
+
 function checkPatterns(password) {
     let penalties = 0;
     
-    // Check for sequential characters (abc, 123)
+    // Проверка последовательностей (abc, 123)
     const sequences = ['abcdefghijklmnopqrstuvwxyz', '0123456789', 'qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
     const lowerPass = password.toLowerCase();
     
@@ -173,22 +174,22 @@ function checkPatterns(password) {
         for (let i = 0; i <= seq.length - 3; i++) {
             const pattern = seq.substring(i, i + 3);
             if (lowerPass.includes(pattern)) penalties += 10;
-            // Check reverse
+            // Проверка обратной последовательности
             const reversePattern = pattern.split('').reverse().join('');
             if (lowerPass.includes(reversePattern)) penalties += 10;
         }
     }
     
-    // Check for repeated characters (aaa, 111)
+    // Проверка повторяющихся символов (aaa, 111)
     if (/(.)\1{2,}/.test(password)) penalties += 15;
     
-    // Check for repeated patterns (abab, 1212)
+    // Проверка повторяющихся шаблонов (abab, 1212)
     if (/(.+)\1+/.test(password)) penalties += 10;
     
     return Math.min(penalties, 40); // Cap penalties
 }
 
-// Format crack time to human readable string
+// Форматирование времени взлома в читаемую строку
 function formatCrackTime(seconds) {
     if (!isFinite(seconds) || seconds < 0) return { time: 'вечность', icon: 'fa-infinity', color: 'text-cyan-400' };
     
@@ -204,7 +205,7 @@ function formatCrackTime(seconds) {
     const billion_years = year * 1e9;
     const trillion_years = year * 1e12;
     
-    // Universe age ~13.8 billion years
+    // Возраст Вселенной ≈ 13.8 млрд лет
     const universeAge = year * 13.8e9;
     
     let time, icon, color;
@@ -285,7 +286,6 @@ function formatCrackTime(seconds) {
     return { time, icon, color };
 }
 
-// Russian pluralization
 function pluralize(n, one, few, many) {
     const mod10 = n % 10;
     const mod100 = n % 100;
@@ -296,23 +296,23 @@ function pluralize(n, one, few, many) {
     return many;
 }
 
-// Calculate password strength based on crack time
+// Расчёт надёжности пароля на основе времени взлома
 function calculateStrength(password) {
     if (password.length === 0) return { score: 0, crackTimeData: { time: '—', icon: 'fa-clock', color: 'text-gray-400' }, secondsToCrack: 0 };
     
     const poolSize = getPoolSize(password);
     if (poolSize === 0) return { score: 0, crackTimeData: { time: '—', icon: 'fa-clock', color: 'text-gray-400' }, secondsToCrack: 0 };
     
-    // Calculate base combinations
+    // Расчёт базового количества комбинаций
     let combinations = Math.pow(poolSize, password.length);
     
-    // Apply penalties for patterns (reduce effective combinations)
+    // Применение штрафов за шаблон (уменьшаем эффективное число комбинаций)
     const patternPenalty = checkPatterns(password);
     if (patternPenalty > 0) {
         combinations = combinations / Math.pow(2, patternPenalty / 5);
     }
     
-    // Penalty for low uniqueness
+    // Штраф за низкую уникальность символов
     const uniqueChars = new Set(password).size;
     const uniqueRatio = uniqueChars / password.length;
     if (uniqueRatio < 0.5) {
@@ -321,16 +321,16 @@ function calculateStrength(password) {
         combinations = combinations / 3;
     }
     
-    // Attack speed: 100 billion guesses per second (8x RTX 4090 cluster, fast hash)
+    // Скорость атаки: 100 млрд попыток в секунду (кластер из 8× RTX 4090, быстрый хеш)
     const guessesPerSecond = 100e9;
     
-    // Average case: need to try half of all combinations
+    // Средний случай: требуется перебрать половину всех комбинаций
     const secondsToCrack = Math.max(0, combinations / guessesPerSecond / 2);
     
-    // Get formatted crack time
+    // Получение форматированного времени взлома
     const crackTimeData = formatCrackTime(secondsToCrack);
     
-    // Score based DIRECTLY on crack time (this ensures consistency!)
+    // Оценка основывается НАПРЯМУЮ на времени взлома
     const minute = 60;
     const hour = minute * 60;
     const day = hour * 24;
@@ -371,7 +371,7 @@ function calculateStrength(password) {
     };
 }
 
-// Update strength indicator
+// Обновление индикатора надёжности
 function updateStrengthIndicator(strengthData) {
     const bar = document.getElementById('strengthBar');
     const text = document.getElementById('strengthText');
@@ -382,10 +382,10 @@ function updateStrengthIndicator(strengthData) {
     const percentage = score * 10;
     bar.style.width = `${percentage}%`;
     
-    // Update crack time with icon and color
+    // Обновление времени взлома с иконкой и цветом
     crackTime.innerHTML = `<i class="fas ${crackTimeData.icon} mr-1"></i>Время взлома: <span class="${crackTimeData.color} font-semibold">${crackTimeData.time}</span>`;
     
-    // Remove all strength classes
+    // Удаление всех классов уровней надёжности
     bar.classList.remove(
         'strength-critical', 'strength-very-weak', 'strength-weak', 
         'strength-poor', 'strength-fair', 'strength-moderate',
@@ -466,7 +466,7 @@ function updateStrengthIndicator(strengthData) {
     }
 }
 
-// Copy password to clipboard
+// Копирование пароля в буфер обмена
 async function copyPassword() {
     const display = document.getElementById('passwordDisplay');
     const password = display.textContent;
@@ -478,12 +478,12 @@ async function copyPassword() {
     try {
         await navigator.clipboard.writeText(password);
         
-        // Show notification
+        // Показ уведомления
         const notification = document.getElementById('copyNotification');
         notification.classList.remove('opacity-0');
         notification.classList.add('opacity-100', '-translate-y-2');
         
-        // Button animation
+        // Анимация кнопки
         const btn = document.getElementById('copyBtn');
         btn.classList.add('copy-success');
         btn.innerHTML = '<i class="fas fa-check text-white"></i>';
@@ -499,25 +499,25 @@ async function copyPassword() {
     }
 }
 
-// Add password to history
+// Добавление пароля в историю
 function addToHistory(password) {
-    // Avoid duplicates
+    // Предотвращение дубликатов
     if (passwordHistory[0] === password) return;
     
     passwordHistory.unshift(password);
     
-    // Keep only last 10 passwords
+    // Храним только последние 10 паролей
     if (passwordHistory.length > 10) {
         passwordHistory = passwordHistory.slice(0, 10);
     }
     
-    // Save to localStorage
+    // Сохранение в localStorage
     localStorage.setItem('passwordHistory', JSON.stringify(passwordHistory));
     
     updateHistoryDisplay();
 }
 
-// Update history display
+// Обновление отображения истории
 function updateHistoryDisplay() {
     const section = document.getElementById('historySection');
     const list = document.getElementById('historyList');
@@ -543,7 +543,7 @@ function updateHistoryDisplay() {
     });
 }
 
-// Copy history item
+// Копирование элемента из истории
 async function copyHistoryItem(password) {
     try {
         await navigator.clipboard.writeText(password);
@@ -561,28 +561,28 @@ async function copyHistoryItem(password) {
     }
 }
 
-// Clear history
+// Очистка истории
 function clearHistory() {
     passwordHistory = [];
     localStorage.removeItem('passwordHistory');
     updateHistoryDisplay();
 }
 
-// Escape HTML to prevent XSS
+// Экранирование HTML для предотвращения XSS
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
 
-// Keyboard shortcut
+// Горячие клавиши
 document.addEventListener('keydown', (e) => {
-    // Ctrl/Cmd + G to generate
+    // Ctrl/Cmd + G — сгенерировать пароль
     if ((e.ctrlKey || e.metaKey) && e.key === 'g') {
         e.preventDefault();
         generatePassword();
     }
-    // Ctrl/Cmd + C to copy (when not in input)
+    // Ctrl/Cmd + C — скопировать (если не в поле ввода)
     if ((e.ctrlKey || e.metaKey) && e.key === 'c' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
         copyPassword();
     }
